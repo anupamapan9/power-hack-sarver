@@ -21,8 +21,8 @@ async function run() {
         app.get('/billing-list', async (req, res) => {
             const query = {}
             const page = parseInt(req.query.page)
+            const searched = req.query.searched
             const size = 10;
-
             const result = await billCollection.find(query).skip(page * 10).limit(size).toArray()
             res.send({ result })
         })
@@ -31,12 +31,30 @@ async function run() {
             res.send({ count })
         })
 
+
+
+        app.post('/add-billing', async (req, res) => {
+            const billing = req.body;
+            const result = await billCollection.insertOne(billing)
+            res.send(result)
+        })
+        app.put('/update-billing/:id', async (req, res) => {
+            const id = req.params.id;
+            const newBill = req.body;
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true }
+            const updateDoc = {
+                $set: newBill
+            };
+            const result = await billCollection.updateOne(filter, updateDoc, options)
+            res.send(result)
+        })
+
         app.delete('/delete-billing/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) }
             const result = await billCollection.deleteOne(query);
             res.send(result);
-
         })
     } finally {
 
