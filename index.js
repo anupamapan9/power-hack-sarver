@@ -20,8 +20,15 @@ async function run() {
 
         app.get('/billing-list', async (req, res) => {
             const query = {}
-            const result = await billCollection.find(query).toArray()
-            res.send(result)
+            const page = parseInt(req.query.page)
+            const size = 10;
+
+            const result = await billCollection.find(query).skip(page * 10).limit(size).toArray()
+            res.send({ result })
+        })
+        app.get('/billingCount', async (req, res) => {
+            const count = await billCollection.find({}).count()
+            res.send({ count })
         })
     } finally {
 
