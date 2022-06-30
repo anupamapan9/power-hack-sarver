@@ -18,15 +18,16 @@ async function run() {
         await client.connect();
         const billCollection = client.db("powerHack").collection("bills");
 
-
-
+        app.get('/billing-list', async (req, res) => {
+            const query = {}
+            const result = await billCollection.find(query).toArray()
+            res.send(result)
+        })
     } finally {
 
     }
 }
 run().catch(console.dir);
-
-console.log(uri)
 
 app.get('/', (req, res) => {
     res.send('Welcome to Power Hacks')
