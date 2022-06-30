@@ -27,8 +27,16 @@ async function run() {
             res.send({ result })
         })
         app.get('/billingCount', async (req, res) => {
-            const count = await billCollection.find({}).count()
+            const count = await billCollection.estimatedDocumentCount()
             res.send({ count })
+        })
+
+        app.delete('/delete-billing/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await billCollection.deleteOne(query);
+            res.send(result);
+
         })
     } finally {
 
