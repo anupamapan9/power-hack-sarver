@@ -1,8 +1,8 @@
 const express = require('express')
 const app = express()
 const port = process.env.PORT || 5000
-
-
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const cors = require('cors');
 require('dotenv').config()
 // middle wares ------------------- 
@@ -17,6 +17,7 @@ async function run() {
     try {
         await client.connect();
         const billCollection = client.db("powerHack").collection("bills");
+        const userCollection = client.db("powerHack").collection("user");
 
         app.get('/billing-list', async (req, res) => {
             const query = {}
@@ -55,7 +56,38 @@ async function run() {
             const query = { _id: ObjectId(id) }
             const result = await billCollection.deleteOne(query);
             res.send(result);
+        });
+
+        app.post('/registration', async (req, res) => {
+            const data = req.body;
+            const email = data.email
+            const userPass = data.password;
+            const password = await bcrypt.hash(userPass, 10)
+            const user = await userCollection.find({}).toArray();
+            let isUser;
+            user.forEach(us => {
+                if (us.email === email) {
+
+                    return isUser = true
+                } else {
+                    return isUser = false
+                }
+            })
+
+            if (isUser) {
+
+                console.log(isUser)
+                res.send({ message: 'User already Register' })
+            } else {
+                const newUser = { email, password }
+                const result = await userCollection.insertOne(newUser)
+                res.send(result)
+            }
         })
+        app.post('/login', async (req, res) => {
+            const email = req.body.email
+        })
+
     } finally {
 
     }
