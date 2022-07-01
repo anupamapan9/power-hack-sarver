@@ -107,9 +107,8 @@ async function run() {
             })
 
             if (isUser) {
-
                 console.log(isUser)
-                res.send({ message: 'User already Register' })
+                res.send({ message: 'User already Registered' })
             } else {
                 const newUser = { email, password }
                 const result = await userCollection.insertOne(newUser)
