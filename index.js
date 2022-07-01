@@ -23,7 +23,7 @@ async function run() {
             const page = parseInt(req.query.page)
             const searched = req.query.searched
             const size = 10;
-            const result = await billCollection.find(query).skip(page * 10).limit(size).toArray()
+            const result = await billCollection.find(query).sort({ _id: -1 }).skip(page * 10).limit(size).toArray()
             res.send({ result })
         })
         app.get('/billingCount', async (req, res) => {
