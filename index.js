@@ -85,7 +85,19 @@ async function run() {
             }
         })
         app.post('/login', async (req, res) => {
-            const email = req.body.email
+            const email = req.body.email;
+            const password = req.body.password;
+            const user = await userCollection.findOne({ email })
+            if (!user) {
+                return res.send({ message: 'user/password does not exist' })
+            }
+            if (bcrypt.compare(password, user.password)) {
+                const token = jwt.sign({ email: user.email }, process.env.JWT_shh,)
+                console.log(token)
+                console.log("ok")
+                return res.send({ message: 'ok done', token })
+            }
+            res.send({ message: 'user/password does not exist' });
         })
 
     } finally {
